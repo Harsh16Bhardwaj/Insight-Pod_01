@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Music } from 'lucide-react';
 import Navigation from './components/Navigation';
 import AuthPage from './pages/AuthPage';
@@ -9,10 +10,9 @@ import CommunityPage from './pages/CommunityPage';
 import FeedbackPage from './pages/FeedbackPage';
 import 'animate.css';
 import Carousel from './pages/Carousel';
-
+import Register from './pages/Register';  // Import your Register page
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentPage, setCurrentPage] = useState('home');
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -23,27 +23,40 @@ function App() {
   };
 
   return (
-    <div className="gradient-bg min-h-screen text-white">
-      {!isAuthenticated ? (
-        <AuthPage onLogin={handleLogin} />
-      ) : (
-        <>
-          <Navigation 
-            currentPage={currentPage} 
-            onPageChange={setCurrentPage} 
-            onLogout={handleLogout}
-          />
-          <div className="pt-24">
-            {currentPage === 'home' && <HomePage />}
-            {currentPage === 'player' && <PlayerPage />}
-            {currentPage === 'leaderboard' && <LeaderboardPage />}
-            {currentPage === 'community' && <CommunityPage />}
-            {currentPage === 'feedback' && <FeedbackPage />}
-            {currentPage === 'carousel' && <Carousel></Carousel> }
-          </div>
-        </>
-      )}
-    </div>
+    <Router>
+      <div className="gradient-bg min-h-screen text-white">
+        {!isAuthenticated ? (
+          <>
+            <Navigation onLogout={handleLogout} isAuthenticated={isAuthenticated} />
+            <div className="pt-24">
+              <Routes>
+                <Route path="/" element={<HomePage />} /> {/* Homepage */}
+                <Route path="/login" element={<AuthPage onLogin={handleLogin} />} /> {/* Login page */}
+                <Route path="/register" element={<Register />} /> {/* Register page */}
+                {/* Default Route */}
+                <Route path="/" element={<HomePage />} />
+              </Routes>
+            </div>
+          </>
+        ) : (
+          <>
+            <Navigation onLogout={handleLogout} isAuthenticated={isAuthenticated} />
+            <div className="pt-24">
+              <Routes>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/player" element={<PlayerPage />} />
+                <Route path="/leaderboard" element={<LeaderboardPage />} />
+                <Route path="/community" element={<CommunityPage />} />
+                <Route path="/feedback" element={<FeedbackPage />} />
+                <Route path="/carousel" element={<Carousel />} />
+                {/* Default Route */}
+                <Route path="/" element={<HomePage />} />
+              </Routes>
+            </div>
+          </>
+        )}
+      </div>
+    </Router>
   );
 }
 
