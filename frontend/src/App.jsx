@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Music } from 'lucide-react';
-import Navigation from './components/Navigation';
-import AuthPage from './pages/AuthPage';
-import HomePage from './pages/HomePage';
-import PlayerPage from './pages/PlayerPage';
-import LeaderboardPage from './pages/LeaderboardPage';
-import CommunityPage from './pages/CommunityPage';
-import FeedbackPage from './pages/FeedbackPage';
-import 'animate.css';
-import Carousel from './pages/Carousel';
-import Register from './pages/Register';  // Import your Register page
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom"; // Added Navigate for redirect
+import { Music } from "lucide-react";
+import Navigation from "./components/Navigation";
+import AuthPage from "./pages/AuthPage";
+import HomePage from "./pages/HomePage";
+import PlayerPage from "./pages/PlayerPage";
+import LeaderboardPage from "./pages/LeaderboardPage";
+import CommunityPage from "./pages/CommunityPage";
+import FeedbackPage from "./pages/FeedbackPage";
+import "animate.css";
+import Carousel from "./pages/Carousel";
+import Register from "./pages/Register"; // Import your Register page
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check localStorage for authentication state on initial load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -20,42 +34,39 @@ function App() {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem("token"); // Clear token on logout
   };
 
   return (
     <Router>
       <div className="gradient-bg min-h-screen text-white">
-        {!isAuthenticated ? (
-          <>
-            <Navigation onLogout={handleLogout} isAuthenticated={isAuthenticated} />
-            <div className="pt-24">
-              <Routes>
-                <Route path="/" element={<HomePage />} /> {/* Homepage */}
-                <Route path="/login" element={<AuthPage onLogin={handleLogin} />} /> {/* Login page */}
-                <Route path="/register" element={<Register />} /> {/* Register page */}
-                {/* Default Route */}
-                <Route path="/" element={<HomePage />} />
-              </Routes>
-            </div>
-          </>
-        ) : (
-          <>
-            <Navigation onLogout={handleLogout} isAuthenticated={isAuthenticated} />
-            <div className="pt-24">
-              <Routes>
+        <Navigation onLogout={handleLogout} isAuthenticated={isAuthenticated} />
+        <div className="pt-24">
+          <Routes>
+            {!isAuthenticated ? (
+              <>
+                <Route path="/" element={<HomePage />} /> 
+                <Route
+                  path="/login"
+                  element={<AuthPage onLogin={handleLogin} />}
+                />{" "}
+                <Route path="/register" element={<Register />} />{" "}
+                <Route path="*" element={<Navigate to="/" />} />{" "}
+              </>
+            ) : (
+              <>
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/player" element={<PlayerPage />} />
-                {/* <Route path="/preferences" element={<PreferencesPage />} /> */}
                 <Route path="/leaderboard" element={<LeaderboardPage />} />
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
+                {/* <Route path="/preferences" element={<PreferencesPage />} /> */}
                 <Route path="/carousel" element={<Carousel />} />
-                {/* Default Route */}
-                <Route path="/" element={<HomePage />} />
-              </Routes>
-            </div>
-          </>
-        )}
+                <Route path="*" element={<Navigate to="/home" />} />{" "}
+              </>
+            )}
+          </Routes>
+        </div>
       </div>
     </Router>
   );
