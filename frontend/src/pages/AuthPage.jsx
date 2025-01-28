@@ -3,12 +3,14 @@ import { Music } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { login } from '../store/slices/authSlice.js'; // Adjust the path if necessary
 import axiosInstance from '../utils/axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function AuthPage({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // To handle error messages
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,11 +20,16 @@ function AuthPage({ onLogin }) {
       const response = await axiosInstance.post('/user/login', { email, password }); // Adjust your API endpoint
       const userData = response.data; // Assuming the user data is returned in the response
       console.log(userData); // Log the user data
+
       // Dispatch the login action
       dispatch(login(userData));
 
       // Optionally call onLogin callback
       onLogin();
+
+      // Redirect to preferences page after successful login
+      navigate('/preferences'); // Redirect to preferences page
+
     } catch (error) {
       setError('Invalid email or password'); // Handle the error
     }
