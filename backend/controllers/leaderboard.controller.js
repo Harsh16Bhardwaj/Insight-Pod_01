@@ -1,6 +1,6 @@
-import LeaderboardModel from "../models/leaderboardModel.js";
-import UserModel from "../models/userModel.js";
 import mongoose from "mongoose";
+import UserModel from "../models/user.model.js";
+import LeaderboardModel from "../models/leaderboard.model.js";
 
 /**
  * Fetch the current leaderboard sorted by points

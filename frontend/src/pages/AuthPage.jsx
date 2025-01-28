@@ -1,13 +1,31 @@
 import React, { useState } from 'react';
 import { Music } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { login } from '../store/slices/authSlice.js'; // Adjust the path if necessary
+import axiosInstance from '../utils/axios';
 
 function AuthPage({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); // To handle error messages
+  const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onLogin();
+    setError(''); // Clear previous errors
+
+    try {
+      const response = await axiosInstance.post('/user/login', { email, password }); // Adjust your API endpoint
+      const userData = response.data; // Assuming the user data is returned in the response
+      console.log(userData); // Log the user data
+      // Dispatch the login action
+      dispatch(login(userData));
+
+      // Optionally call onLogin callback
+      onLogin();
+    } catch (error) {
+      setError('Invalid email or password'); // Handle the error
+    }
   };
 
   return (
@@ -47,6 +65,7 @@ function AuthPage({ onLogin }) {
                          focus:outline-none focus:ring-2 focus:ring-cyan-400 input-highlight transition-all duration-300"
               />
             </div>
+            {error && <p className="text-red-500 text-center">{error}</p>} {/* Error message */}
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-white py-4 rounded-xl font-semibold 
