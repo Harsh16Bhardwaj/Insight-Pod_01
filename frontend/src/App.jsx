@@ -45,6 +45,7 @@ function App() {
               <Routes>
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/player" element={<PlayerPage />} />
+                {/* <Route path="/preferences" element={<PreferencesPage />} /> */}
                 <Route path="/leaderboard" element={<LeaderboardPage />} />
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
