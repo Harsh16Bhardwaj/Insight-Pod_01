@@ -9,8 +9,8 @@ const podcastSchema = new mongoose.Schema(
     url: { type: String, required: true },
     platform: { type: String }, // Example: YouTube, Spotify
     duration: { type: Number }, // Duration in seconds
-    releaseDate: { type: Date },
     summary: { type: String },
+    transcript: { type: String},
     createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }

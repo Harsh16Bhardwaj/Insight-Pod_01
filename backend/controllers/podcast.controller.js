@@ -12,7 +12,7 @@ export const createPodcast = async (req, res) => {
       url,
       platform,
       duration,
-      releaseDate,
+      transcript,
       summary,
     } = req.body;
 
@@ -33,7 +33,7 @@ export const createPodcast = async (req, res) => {
       url,
       platform,
       duration,
-      releaseDate,
+      transcript,
       summary,
     });
 

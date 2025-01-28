@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import userRouter from "./routes/user.routes.js";
 import podcastRouter from "./routes/podcast.routes.js";
 import langflowRouter from "./routes/langflow.routes.js";
-import leaderboardRouter from "./routes/leaderboard.js";
+import leaderboardRouter from "./routes/leaderboard.routes.js";
 dotenv.config({});
 const app = express();
 // const corsOptions = {
