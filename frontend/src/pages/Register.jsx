@@ -1,15 +1,36 @@
 import React, { useState } from 'react';
+import { Music } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import axiosInstance from '../utils/axios';
 
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState(''); // Added phoneNumber state
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform registration logic here (e.g., send data to API)
-    console.log({ email, password, name, phoneNumber });
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await axiosInstance.post('/user/register', { email, password, name, phoneNumber });
+
+      // Handle success
+      console.log('User registered successfully:', response.data);
+      setLoading(false);
+
+      // Redirect to login page after successful registration
+      navigate('/login'); // Redirect to login page
+
+    } catch (error) {
+      setLoading(false);
+      setError('Registration failed. Please try again.');
+    }
   };
 
   return (
@@ -71,12 +92,14 @@ function Register() {
                           focus:outline-none focus:ring-2 focus:ring-cyan-400 input-highlight transition-all duration-300"
               />
             </div>
+            {error && <p className="text-red-500 text-center">{error}</p>}
             <button
               type="submit"
+              disabled={loading}
               className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-white py-4 rounded-xl font-semibold 
                          hover:opacity-90 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
             >
-              Register
+              {loading ? 'Registering...' : 'Register'}
             </button>
           </form>
         </div>
