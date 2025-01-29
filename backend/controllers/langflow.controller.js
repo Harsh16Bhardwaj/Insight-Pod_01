@@ -71,7 +71,7 @@ export const fetchQuiz = async (req, res) => {
 
   try {
     const url = "https://api.langflow.astra.datastax.com/lf/08a89bc2-4398-422a-bcfb-4955f89eb942/api/v1/run/3b47b837-a6f4-4e57-be0a-8d45627380b5?stream=false";
-    const token = process.env.LANGFLOW_API_TOKEN;
+    const token = process.env.LANGFLOW_API_TOKEN_QUIZ;
 
     const payload = {
       input_value: transcript,

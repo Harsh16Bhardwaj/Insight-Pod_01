@@ -5,8 +5,10 @@ import { setPreferences } from "../store/slices/authSlice.js"; // Adjust path ba
 import { podcastGenres as genres } from "../utils/genres.js"; // Adjust the import path
 import SummaryModal from "../components/SummaryModal.jsx";
 import axiosInstance from "../utils/axios.js"; // Ensure the correct import path
+import { useNavigate } from "react-router-dom";
 
 const PrefrencePage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedSubgenres, setSelectedSubgenres] = useState({});
@@ -103,7 +105,7 @@ const PrefrencePage = () => {
       setShowSummary(true);
     } catch (error) {
       console.error("Error saving preferences:", error);
-      alert("Failed to save preferences. Please try again.");
+      navigate("/dashboard"); // Redirect to dashboard on error
     }
   };
   return (
