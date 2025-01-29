@@ -50,7 +50,7 @@ function FeedbackPage() {
   };
 
   return (
-    <div className="container mx-auto px-6">
+    <div className="container h-auto mx-auto px-6 pb-20">
       <h2 className="text-4xl font-bold text-center mb-12">Your Feedback Matters</h2>
       
       <div className="glass-effect rounded-xl p-8 mb-8 animate__animated animate__fadeIn">
@@ -142,11 +142,11 @@ function FeedbackPage() {
       <button
         onClick={handleSubmit}
         className="bg-gradient-to-r from-cyan-400 to-blue-500 px-12 py-4 rounded-xl text-lg font-semibold 
-                 hover:opacity-90 transition-all duration-300 transform hover:scale-105 mx-auto block mb-12"
+                 hover:opacity-90 transition-all duration-300 transform hover:scale-105 mx-auto block "
       >
         Submit Feedback
       </button>
-    </div>
+    </div >
   );
 }
 
