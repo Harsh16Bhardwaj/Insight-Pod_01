@@ -10,6 +10,7 @@ import FeedbackPage from "./pages/FeedbackPage";
 import Carousel from "./pages/Carousel";
 import Register from "./pages/Register";
 import PrefrencePage from "./pages/prefrencePage";
+import Dashboard from "./pages/DashboardPage";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -59,6 +60,8 @@ function App() {
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
                 <Route path="/carousel" element={<Carousel />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+
               </Routes>
             </div>
           </>
