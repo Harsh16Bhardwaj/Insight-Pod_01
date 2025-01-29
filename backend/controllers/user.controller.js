@@ -102,7 +102,8 @@ export const addPreferences = async (req, res) => {
   try {
     const { userId } = req.user; 
     const { preferences } = req.body;
-
+    console.log(userId);
+    console.log(preferences);
     // Validate input
     if (!preferences || !Array.isArray(preferences)) {
       return res.status(400).json({

@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    preferences: { type: [String], default: [""] },
+    preferences: { type: [String] },
     streak: { type: Number, default: 0 },
     watchLater: { type: [ObjectId], ref: "Podcast", default: [] },
     totalPoints: { type: Number, default: 0 },
