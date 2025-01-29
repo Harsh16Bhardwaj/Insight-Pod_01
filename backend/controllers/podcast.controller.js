@@ -69,10 +69,10 @@ export const getPodcasts = async (req, res) => {
 };
 
 export const getPodcastsByPreference = async (req, res) => {
-  const { userId } = req.user;
+  const { UserId } = req.user;
   try {
     // Find the user and their preferences
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(UserId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -104,25 +104,12 @@ export const getPodcastsByPreference = async (req, res) => {
 };
 
 export const getPodcastsBySearch = async (req, res) => {
-  const { userId } = req.user;  // User ID from the authentication token
   const { searchQuery } = req.query;  // Search query passed from the client (category or tags)
   
   try {
-    // Find the user and their preferences
-    const user = await UserModel.findById(userId);
-    
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const { preferences } = user; // User preferences (category or tags)
-    
-    // If searchQuery is provided, filter based on it (either by category or tags)
-    const searchCondition = {
-      $or: [
-        { category: { $in: preferences } }, // Match by category
-        { tags: { $in: preferences } }, // Match by tags
-      ],
+    // Initialize search condition for the query
+    let searchCondition = {
+      $or: [],
     };
 
     if (searchQuery) {
