@@ -1,27 +1,43 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setInitialPodcasts, setSearchedPodcasts, setLoading, setError } from "../store/slices/podcastSlice"; // Import actions
 import axiosInstance from "../utils/axios";
 import PodcastCard from "../components/Card";
 
 const Dashboard = () => {
-  const [podcasts, setPodcasts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const { initialPodcasts, searchedPodcasts, loading, error } = useSelector((state) => state.podcast); // Access Redux state
+
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
-  // Fetch podcasts from API based on search query
+  // Fetch initial podcasts when the component mounts
+  useEffect(() => {
+    const fetchInitialPodcasts = async () => {
+      dispatch(setLoading()); // Dispatch loading action
+      try {
+        const response = await axiosInstance.get("/podcast", {
+          withCredentials: true, // Send the token with the request
+        });
+        dispatch(setInitialPodcasts(response.data.podcasts)); // Store the initial podcasts in Redux
+      } catch (err) {
+        dispatch(setError("Failed to fetch podcasts."));
+      }
+    };
+
+    fetchInitialPodcasts();
+  }, [dispatch]);
+
+  // Fetch podcasts based on search query
   const fetchPodcasts = async (query) => {
-    setLoading(true);
+    dispatch(setLoading()); // Dispatch loading action
     try {
       const response = await axiosInstance.get("/podcast/search", {
         params: { searchQuery: query },
         withCredentials: true, // Send the token with the request
       });
-      setPodcasts(response.data.podcasts); // Store the podcast data
-    } catch (error) {
-      setError("Failed to fetch podcasts.");
-      console.error("Error fetching podcasts:", error);
-    } finally {
-      setLoading(false);
+      dispatch(setSearchedPodcasts(response.data.podcasts)); // Store the searched podcasts in Redux
+    } catch (err) {
+      dispatch(setError("Failed to fetch podcasts."));
     }
   };
 
@@ -38,24 +54,6 @@ const Dashboard = () => {
     }
   };
 
-  // Initial fetch when component mounts (for recommended podcasts)
-  useEffect(() => {
-    const fetchInitialPodcasts = async () => {
-      try {
-        const response = await axiosInstance.get("/podcast", {
-          withCredentials: true, // Send the token with the request
-        });
-        setPodcasts(response.data.podcasts); // Store the podcast data
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch podcasts.");
-        setLoading(false);
-      }
-    };
-
-    fetchInitialPodcasts();
-  }, []);
-
   return (
     <div className="p-6">
       <div className="glass-effect rounded-xl p-8">
@@ -63,10 +61,8 @@ const Dashboard = () => {
           onSubmit={handleSubmit}
           className="flex justify-center items-center space-x-5"
         >
-          <div className="">
-            <label htmlFor="search" className="sr-only">
-              Search
-            </label>
+          <div>
+            <label htmlFor="search" className="sr-only">Search</label>
             <input
               type="text"
               id="search"
@@ -93,8 +89,9 @@ const Dashboard = () => {
       {loading && <p className="text-white">Loading podcasts...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
+      {/* Render podcasts based on search query */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {podcasts.map((podcast) => (
+        {(searchedPodcasts.length > 0 ? searchedPodcasts : initialPodcasts).map((podcast) => (
           <PodcastCard key={podcast._id} podcast={podcast} />
         ))}
       </div>

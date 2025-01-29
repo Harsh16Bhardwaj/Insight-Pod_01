@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../store/slices/authSlice";
 import axiosInstance from "../utils/axios";
 import { useNavigate } from "react-router-dom";
-import Loader from "../components/loader";
+import Loader from "../components/Loader";
 
 function AuthPage({ onLogin }) {
   const [email, setEmail] = useState("");

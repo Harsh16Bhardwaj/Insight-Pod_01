@@ -3,14 +3,15 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
-import PlayerPage from "./pages/PlayerPage";
+// import PlayerPage from "./pages/PlayerPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import CommunityPage from "./pages/CommunityPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import Carousel from "./pages/Carousel";
 import Register from "./pages/Register";
-import PrefrencePage from "./pages/prefrencePage";
+import PrefrencePage from "./pages/PreferencePage";
 import Dashboard from "./pages/DashboardPage";
+import PodcastCardPlayer from "./components/Podcast";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,12 +56,14 @@ function App() {
               <Routes>
               <Route path="/preferences" element={<PrefrencePage />} />
                 <Route path="/home" element={<HomePage />} />
-                <Route path="/player" element={<PlayerPage />} />
+                {/* <Route path="/player" element={<PlayerPage />} /> */}
                 <Route path="/leaderboard" element={<LeaderboardPage />} />
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
                 <Route path="/carousel" element={<Carousel />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/player/:id" element={<PodcastCardPlayer />} />
+
 
               </Routes>
             </div>

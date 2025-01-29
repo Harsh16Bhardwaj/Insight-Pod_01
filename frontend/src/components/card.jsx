@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom"; // For navigation
 
 const PodcastCard = ({ podcast }) => {
   return (
@@ -7,16 +8,17 @@ const PodcastCard = ({ podcast }) => {
         {podcast.category}
       </div>
       <h2 className="text-white text-lg font-semibold mb-2">{podcast.title}</h2>
-      <p className="text-gray-300 text-sm line-clamp-2">{podcast.description}</p>
+      <p className="text-gray-300 text-sm line-clamp-2">
+        {podcast.description}
+      </p>
       <div className="mt-4">
-        <a
-          href={podcast.url}
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* Use Link to navigate */}
+        <Link
+          to={`/player/${podcast._id}`} // Include the podcast ID in the URL
           className="block text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 transition"
         >
           Listen Now
-        </a>
+        </Link>
       </div>
     </div>
   );

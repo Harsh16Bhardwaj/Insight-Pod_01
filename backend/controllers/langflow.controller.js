@@ -37,7 +37,7 @@ export const fetchSummary = async (req, res) => {
 
   try {
     const url = "https://api.langflow.astra.datastax.com/lf/08a89bc2-4398-422a-bcfb-4955f89eb942/api/v1/run/f0679efb-2974-4349-a6e9-eb216ee862a8?stream=false";
-    const token = process.env.LANGFLOW_API_TOKEN;
+    const token = process.env.LANGFLOW_API_TOKEN_SUMMARY;
 
     const payload = {
       input_value: transcript,
@@ -85,7 +85,6 @@ export const fetchQuiz = async (req, res) => {
       },
     };
 
-    // Call LangFlow API
     const response = await axios.post(url, payload, {
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +95,12 @@ export const fetchQuiz = async (req, res) => {
     res.status(200).json({ quiz: response.data });
   } catch (error) {
     console.error("Error fetching quiz:", error.response?.data || error.message);
-    res.status(500).json({ error: "Error fetching quiz from LangFlow API" });
+    
+    if (error.response?.data?.detail === "Flow identifier not found") {
+      res.status(400).json({ error: "Invalid flow identifier or the flow was not found" });
+    } else {
+      res.status(500).json({ error: "Error fetching quiz from LangFlow API" });
+    }
   }
 };
 

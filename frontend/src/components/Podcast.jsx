@@ -1,35 +1,47 @@
-import { useState } from "react";
-import PodcastPlayer from './AudioPlayer.jsx'
-const quizData = {
-  questions: [
-    {
-      topic: "The Age of Trees",
-      question: "How long can some trees live?",
-      options: [
-        "A. A few decades",
-        "B. A few centuries",
-        "C. Thousands of years",
-        "D. Millions of years"
-      ],
-      correct: "C. Thousands of years"
-    },
-    {
-      topic: "The Deepest Ocean",
-      question: "Which is the deepest ocean?",
-      options: [
-        "A. Atlantic Ocean",
-        "B. Indian Ocean",
-        "C. Arctic Ocean",
-        "D. Pacific Ocean"
-      ],
-      correct: "D. Pacific Ocean"
-    }
-  ]
-};
+import { useEffect, useState } from "react";
+import PodcastPlayer from "./AudioPlayer.jsx";
+import { useParams } from "react-router";
+import axiosInstance from "../utils/axios.js"; // Assuming you have your axios setup here
 
-const summaryText = "The transcript discusses the fascinating world of trees, exploring their ancient yet fresh appeal, their role in ecosystems, and the impact they have on our lives, from physical benefits to emotional nourishment. Trees are not just beautiful to look at; they're crucial to the health of the planet, providing oxygen, regulating temperature, and improving air quality. They teach us patience, resilience, and interconnectedness with nature.";
+export default function PodcastCardPlayer() {
+  const { id } = useParams(); // Retrieve podcast ID from URL params
+  const [podcast, setPodcast] = useState(null);
+  const [quizData, setQuizData] = useState(null);
+  const [summaryText, setSummaryText] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-export default function PodcastCard() {
+  useEffect(() => {
+    const fetchPodcast = async () => {
+      try {
+        const podcastResponse = await axiosInstance.get(`/podcast/${id}`);
+        setPodcast(podcastResponse.data.podcast);
+
+        // Fetch data from LangFlow API (quiz, summary, and fact)
+        const transcript = podcastResponse.data.podcast.transcript; // Assuming you have the transcript field in the podcast data
+
+        // Fetch quiz
+        const quizResponse = await axiosInstance.post("/langflow/quiz", { transcript });
+        setQuizData(quizResponse.data.quiz);
+
+        // Fetch summary
+        const summaryResponse = await axiosInstance.post("/langflow/summary", { transcript });
+        setSummaryText(summaryResponse.data.summary);
+
+      } catch (err) {
+        setError("Failed to fetch data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPodcast();
+  }, [id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [quizIndex, setQuizIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -47,8 +59,6 @@ export default function PodcastCard() {
     );
   };
 
-  const question = quizData.questions[quizIndex];
-
   const handleAnswerClick = (option) => {
     if (!isAnswered) {
       setSelectedOption(option);
@@ -62,31 +72,19 @@ export default function PodcastCard() {
     setQuizIndex((prev) => (prev + 1) % quizData.questions.length);
   };
 
+  const question = quizData?.questions[quizIndex];
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white p-6">
       <div className="w-full max-w-4xl bg-gray-800 rounded-2xl shadow-lg p-6">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1 flex items-center justify-center bg-gray-700 p-4 rounded-lg">
-            {/* <audio controls className="w-full">
-              <source
-                src="https://res.cloudinary.com/dikc4f9ip/video/upload/v1738103020/audio_1738103011791.mp3"
-                type="audio/mp3"
-              />
-              Your browser does not support the audio element.
-            </audio> */}
-            <PodcastPlayer
-              src="https://res.cloudinary.com/dikc4f9ip/video/upload/v1738103020/audio_1738103011791.mp3"
-            />
+            <PodcastPlayer src={podcast.url} />
           </div>
 
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-white">
-              The Future of Technology
-            </h2>
-            <p className="text-gray-300 mt-2">
-              In this episode, we discuss the advancements in AI, blockchain, and
-              space exploration, and how they are shaping the future of humanity.
-            </p>
+            <h2 className="text-2xl font-bold text-white">{podcast.title}</h2>
+            <p className="text-gray-300 mt-2">{podcast.description}</p>
           </div>
         </div>
 
@@ -105,13 +103,13 @@ export default function PodcastCard() {
                 : "bg-gray-900"
             }`}
           >
-            {slides[currentIndex] === "quiz" ? (
+            {slides[currentIndex] === "quiz" && quizData ? (
               <div className="p-6 w-full">
-                <h2 className="text-lg font-semibold mb-2">{question.topic}</h2>
-                <p className="text-xl mb-4">{question.question}</p>
+                <h2 className="text-lg font-semibold mb-2">{question?.topic}</h2>
+                <p className="text-xl mb-4">{question?.question}</p>
 
                 <div className="space-y-2">
-                  {question.options.map((option, index) => {
+                  {question?.options.map((option, index) => {
                     let bgColor = "bg-gray-800";
                     if (isAnswered) {
                       if (option === question.correct) {
@@ -143,7 +141,7 @@ export default function PodcastCard() {
                   </button>
                 )}
               </div>
-            ) : slides[currentIndex] === "summary" ? (
+            ) : slides[currentIndex] === "summary" && summaryText ? (
               <div className="p-6 w-full h-full overflow-y-auto">
                 <p className="px-10 py-3">{summaryText}</p>
               </div>

@@ -104,8 +104,8 @@ export const getPodcastsByPreference = async (req, res) => {
 };
 
 export const getPodcastsBySearch = async (req, res) => {
-  const { searchQuery } = req.query;  // Search query passed from the client (category or tags)
-  
+  const { searchQuery } = req.query; // Search query passed from the client (category or tags)
+
   try {
     // Initialize search condition for the query
     let searchCondition = {
@@ -114,21 +114,47 @@ export const getPodcastsBySearch = async (req, res) => {
 
     if (searchQuery) {
       // If a searchQuery is provided, we refine the search based on the query
-      searchCondition.$or.push({ category: { $regex: searchQuery, $options: 'i' } });
-      searchCondition.$or.push({ tags: { $regex: searchQuery, $options: 'i' } });
+      searchCondition.$or.push({
+        category: { $regex: searchQuery, $options: "i" },
+      });
+      searchCondition.$or.push({
+        tags: { $regex: searchQuery, $options: "i" },
+      });
     }
 
     // Fetch podcasts that match the search condition (category, tags, or searchQuery)
     const podcasts = await PodcastModel.find(searchCondition);
 
     if (podcasts.length === 0) {
-      return res.status(404).json({ message: "No podcasts found matching your search criteria" });
+      return res
+        .status(404)
+        .json({ message: "No podcasts found matching your search criteria" });
     }
 
     res.status(200).json({ podcasts });
-
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "An error occurred while fetching podcasts" });
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching podcasts" });
+  }
+};
+
+export const getPodcastById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const podcast = await PodcastModel.findById(id);
+    if (!podcast) {
+      return res.status(404).json({ message: "Podcast not found" });
+    }
+
+    // If podcast found, return the data
+    res.status(200).json({ podcast });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching the podcast" });
   }
 };
