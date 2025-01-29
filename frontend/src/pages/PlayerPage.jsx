@@ -5,33 +5,8 @@ import PodcastCard from '../components/Card.jsx'; // Assuming you have a Podcast
 function PlayerPage() {
   const [progress, setProgress] = useState(45);
   const [searchQuery, setSearchQuery] = useState('');
-  const [podcasts, setPodcasts] = useState([]);
-  const [loading, setLoading] = useState(false);
   const progressBarRef = useRef(null);
 
-  // Fetch podcasts from API based on search query
-  const fetchPodcasts = async (query) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`https://api.podcast.com/search?q=${query}`); // Replace with your actual API
-      const data = await response.json();
-      setPodcasts(data.results); // Assuming data has a `results` field with podcasts
-    } catch (error) {
-      console.error('Error fetching podcasts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    fetchPodcasts(searchQuery); // Trigger podcast search on submit
-  };
 
   const handleProgressClick = (e) => {
     const rect = progressBarRef.current.getBoundingClientRect();
@@ -69,6 +44,13 @@ function PlayerPage() {
       </div>
 
       <div className="glass-effect rounded-xl p-8 mt-8">
+        <h3 className="text-2xl font-bold mb-4">Episode Notes</h3>
+        <div className="prose text-gray-300">
+          <p>In this episode, we explore the revolutionary impact of AI in healthcare...</p>
+        </div>
+      </div>
+
+      <div className="glass-effect rounded-xl p-8 mt-8">
         <h3 className="text-2xl font-bold mb-4">Podcasts</h3>
         {loading ? (
           <p>Loading...</p>
@@ -84,7 +66,24 @@ function PlayerPage() {
           </div>
         )}
       </div>
-      <FullpagFullPageCard/>
+
+      <div className="mt-8">
+        <div
+          ref={progressBarRef}
+          className="w-full bg-gray-700 rounded-full h-2 cursor-pointer"
+          onClick={handleProgressClick}
+        >
+          <div
+            style={{ width: `${progress}%` }}
+            className="bg-blue-500 h-2 rounded-full"
+          ></div>
+        </div>
+        <div className="flex justify-between text-sm mt-2">
+          <span>0:00</span>
+          <span>{`${Math.floor(progress)}%`}</span>
+          <span>End</span>
+        </div>
+      </div>
     </div>
   );
 }
