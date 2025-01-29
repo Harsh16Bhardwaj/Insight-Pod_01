@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import PodcastCard from '../components/card';
+import PodcastCard from '../components/Card';
 
 function PlayerPage() {
   const [progress, setProgress] = useState(45);

@@ -102,3 +102,46 @@ export const getPodcastsByPreference = async (req, res) => {
       .json({ message: "An error occurred while fetching podcasts" });
   }
 };
+
+export const getPodcastsBySearch = async (req, res) => {
+  const { userId } = req.user;  // User ID from the authentication token
+  const { searchQuery } = req.query;  // Search query passed from the client (category or tags)
+  
+  try {
+    // Find the user and their preferences
+    const user = await UserModel.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const { preferences } = user; // User preferences (category or tags)
+    
+    // If searchQuery is provided, filter based on it (either by category or tags)
+    const searchCondition = {
+      $or: [
+        { category: { $in: preferences } }, // Match by category
+        { tags: { $in: preferences } }, // Match by tags
+      ],
+    };
+
+    if (searchQuery) {
+      // If a searchQuery is provided, we refine the search based on the query
+      searchCondition.$or.push({ category: { $regex: searchQuery, $options: 'i' } });
+      searchCondition.$or.push({ tags: { $regex: searchQuery, $options: 'i' } });
+    }
+
+    // Fetch podcasts that match the search condition (category, tags, or searchQuery)
+    const podcasts = await PodcastModel.find(searchCondition);
+
+    if (podcasts.length === 0) {
+      return res.status(404).json({ message: "No podcasts found matching your search criteria" });
+    }
+
+    res.status(200).json({ podcasts });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while fetching podcasts" });
+  }
+};

@@ -1,53 +1,41 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../utils/axios"; // Ensure the correct import path
+import React, { useState, useEffect } from "react";
+import axiosInstance from "../utils/axios";
+import PodcastCard from "../components/Card";
 
 const Dashboard = () => {
   const [podcasts, setPodcasts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch podcasts based on user preferences
     const fetchPodcasts = async () => {
       try {
         const response = await axiosInstance.get("/podcast", {
-          withCredentials: true, // Ensure cookies are sent with the request
+          withCredentials: true, // Send the token with the request
         });
-        setPodcasts(response.data.podcasts);
+        setPodcasts(response.data.podcasts); // Store the podcast data
         setLoading(false);
       } catch (err) {
-        setError("An error occurred while fetching podcasts.");
+        setError("Failed to fetch podcasts.");
         setLoading(false);
       }
     };
 
     fetchPodcasts();
-  }, []); // Runs once when the component mounts
-
-  if (loading) {
-    return <div>Loading podcasts...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  }, []);
 
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <h2>Your Recommended Podcasts</h2>
-      {podcasts.length > 0 ? (
-        <ul>
-          {podcasts.map((podcast) => (
-            <li key={podcast._id}>
-              <h3>{podcast.title}</h3>
-              <p>{podcast.description}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No podcasts found based on your preferences.</p>
-      )}
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-white mb-6">Recommended Podcasts</h1>
+      
+      {loading && <p className="text-white">Loading podcasts...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        {podcasts.map((podcast) => (
+          <PodcastCard key={podcast._id} podcast={podcast} />
+        ))}
+      </div>
     </div>
   );
 };

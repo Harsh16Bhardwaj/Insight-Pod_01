@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPreferences } from "../store/slices/authSlice.js"; // Adjust path based on your file structure
 import { podcastGenres as genres } from "../utils/genres.js"; // Adjust the import path
 import SummaryModal from "../components/SummaryModal.jsx";
-import axiosInstance from "../utils/axios"; // Ensure the correct import path
+import axiosInstance from "../utils/axios.js"; // Ensure the correct import path
 
 const PrefrencePage = () => {
   const dispatch = useDispatch();

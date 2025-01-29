@@ -2,7 +2,7 @@ import React from "react";
 
 const PodcastCard = ({ podcast }) => {
   return (
-    <div className="relative bg-opacity-10 backdrop-blur-lg bg-gray-900 p-6 rounded-2xl shadow-lg border border-gray-800 w-80">
+    <div className="relative bg-opacity-10 backdrop-blur-lg bg-gray-900 p-6 rounded-2xl shadow-lg border border-gray-800 w-80 mb-6">
       <div className="absolute top-2 right-2 bg-gray-700 text-white text-xs px-3 py-1 rounded-full">
         {podcast.category}
       </div>
