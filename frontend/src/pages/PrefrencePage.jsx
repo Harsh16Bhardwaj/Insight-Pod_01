@@ -17,57 +17,6 @@ const PrefrencePage = () => {
   const MAX_SUBGENRES_PER_GENRE = 2;
   const { user } = useSelector((state) => state.auth); // Redux selector for auth state
 
-  // const genres = [
-  //   {
-  //     id: 1,
-  //     name: "Pop",
-  //     color: "bg-cyan-500",
-  //     subgenres: ["Dance Pop", "Synth Pop", "K-Pop", "Teen Pop", "Indie Pop"],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Rock",
-  //     color: "bg-cyan-500",
-  //     subgenres: [
-  //       "Alternative Rock",
-  //       "Classic Rock",
-  //       "Hard Rock",
-  //       "Indie Rock",
-  //       "Progressive Rock",
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Hip Hop",
-  //     color: "bg-cyan-500",
-  //     subgenres: [
-  //       "Trap",
-  //       "Rap",
-  //       "Old School",
-  //       "Underground",
-  //       "Alternative Hip Hop",
-  //     ],
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Electronic",
-  //     color: "bg-cyan-500",
-  //     subgenres: ["House", "Techno", "Dubstep", "Trance", "Ambient"],
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "R&B",
-  //     color: "bg-cyan-500",
-  //     subgenres: ["Soul", "Contemporary R&B", "Neo Soul", "Gospel", "Funk"],
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "Jazz",
-  //     color: "bg-cyan-500",
-  //     subgenres: ["Bebop", "Swing", "Cool Jazz", "Fusion", "Latin Jazz"],
-  //   },
-  // ];
-
   const toggleGenre = (genreId) => {
     if (selectedGenres.includes(genreId)) {
       setSelectedGenres(selectedGenres.filter((id) => id !== genreId));
@@ -132,21 +81,25 @@ const PrefrencePage = () => {
   const handleContinue = async () => {
     try {
       const allSelectedSubgenres = Object.values(selectedSubgenres).flat();
-  
+
       if (allSelectedSubgenres.length === 0) {
         alert("Please select at least one subgenre.");
         return;
       }
       // Prepare preferences payload
-      const preferences =  allSelectedSubgenres;
-  
+      const preferences = allSelectedSubgenres;
+
       // Dispatch to Redux if needed
       dispatch(setPreferences(preferences));
-  
+
       // Hit the API to store preferences
-      const response = await axiosInstance.post("/user/preference", preferences);
+      const response = await axiosInstance.put(
+        "/user/preference",
+        preferences,
+        { withCredentials: true }
+      );
       console.log("Preferences saved successfully:", response.data);
-  
+
       setShowSummary(true);
     } catch (error) {
       console.error("Error saving preferences:", error);
